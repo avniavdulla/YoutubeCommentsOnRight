@@ -2,6 +2,9 @@
 
 Move YouTube comments to the right side of the video on desktop for a more convenient viewing experience.
 
+<img width="400" height="380" alt="image" src="https://github.com/user-attachments/assets/1f79b41c-278e-4093-8a72-b481d18ab561" />
+<img width="400" height="380" alt="image" src="https://github.com/user-attachments/assets/3b7b6f47-3e6b-4efd-a57e-bdee2d9f6f76" />
+
 ## Features
 - Comments appear in the right sidebar, replacing recommendations
 - Recommendations move below the video
