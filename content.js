@@ -38,40 +38,56 @@ function swapCommentsAndRecommendations() {
   }
 
   // Make only the comments section scrollable
-  commentsSidebarWrapper.style.maxHeight = '100vh';
   commentsSidebarWrapper.style.overflowY = 'auto';
 
   return true;
 }
 
 /**
- * Polls for the required YouTube elements and runs the swap logic as soon as possible.
- * Polls every intervalMs for up to maxWaitMs milliseconds.
+ * Checks if all required elements are present in the DOM.
  */
-function waitForElementsAndSwap(maxWaitMs = 3000, intervalMs = 200) {
-  const start = Date.now();
-  const trySwap = () => {
-    if (swapCommentsAndRecommendations()) return;
-    if (Date.now() - start < maxWaitMs) {
-      setTimeout(trySwap, intervalMs);
-    }
+function requiredElementsPresent() {
+  return (
+    document.getElementById('comments') &&
+    document.getElementById('primary') &&
+    document.getElementById('secondary') &&
+    document.getElementById('player')
+  );
+}
+
+/**
+ * Debounce helper to avoid excessive calls to the swap logic.
+ */
+function debounce(fn, delay) {
+  let timeout;
+  return function() {
+    clearTimeout(timeout);
+    timeout = setTimeout(fn, delay);
   };
-  trySwap();
+}
+
+/**
+ * Sets up a robust MutationObserver on the main container to re-run the swap logic whenever the DOM changes.
+ */
+function setupRobustObserver() {
+  const targetNode = document.getElementById('columns') || document.querySelector('ytd-app') || document.body;
+  const debouncedSwap = debounce(() => {
+    if (requiredElementsPresent()) {
+      swapCommentsAndRecommendations();
+    }
+  }, 100);
+  const observer = new MutationObserver(debouncedSwap);
+  observer.observe(targetNode, { childList: true, subtree: true });
 }
 
 /**
  * Initializes the extension logic on page load and on YouTube SPA navigation.
  */
 function onReady() {
-  waitForElementsAndSwap();
-  // Listen for navigation (YouTube uses SPA navigation)
-  let lastUrl = location.href;
-  new MutationObserver(() => {
-    if (location.href !== lastUrl) {
-      lastUrl = location.href;
-      waitForElementsAndSwap();
-    }
-  }).observe(document.body, {childList: true, subtree: true});
+  if (requiredElementsPresent()) {
+    swapCommentsAndRecommendations();
+  }
+  setupRobustObserver();
 }
 
 // Run the extension logic as soon as the DOM is ready
