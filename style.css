@@ -1,0 +1,17 @@
+/* style.css */
+#comments-in-secondary {
+  max-height: 88vh;
+  overflow-y: auto;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  width: 100%;
+}
+
+#comments-in-secondary #comments {
+  background: none;
+  box-shadow: none;
+  border: none;
+  width: 100%;
+} 
